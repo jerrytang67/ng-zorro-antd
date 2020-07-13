@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -29,7 +26,7 @@ import {
 } from '@angular/core';
 import { slideMotion } from 'ng-zorro-antd/core/animation';
 import { NzNoAnimationDirective } from 'ng-zorro-antd/core/no-animation';
-import { BooleanInput, CompareWith, NzDropDownPosition, NzSafeAny } from 'ng-zorro-antd/core/types';
+import { BooleanInput, CompareWith, NzSafeAny } from 'ng-zorro-antd/core/types';
 import { InputBoolean } from 'ng-zorro-antd/core/util';
 import { defer, merge, Observable, Subscription } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -58,7 +55,7 @@ export type AutocompleteDataSource = Array<AutocompleteDataSourceItem | string |
         [ngClass]="nzOverlayClassName"
         [ngStyle]="nzOverlayStyle"
         [nzNoAnimation]="noAnimation?.nzNoAnimation"
-        [@slideMotion]="dropDownPosition"
+        [@slideMotion]="'enter'"
         [@.disabled]="noAnimation?.nzNoAnimation"
       >
         <div style="max-height: 256px; overflow-y: auto; overflow-anchor: none;">
@@ -100,7 +97,6 @@ export class NzAutocompleteComponent implements AfterContentInit, AfterViewInit,
   showPanel: boolean = true;
   isOpen: boolean = false;
   activeItem!: NzAutocompleteOptionComponent;
-  dropDownPosition: NzDropDownPosition = 'bottom';
 
   /**
    * Options accessor, its source may be content or dataSource
@@ -207,11 +203,6 @@ export class NzAutocompleteComponent implements AfterContentInit, AfterViewInit,
 
   getOption(value: NzSafeAny): NzAutocompleteOptionComponent | null {
     return this.options.find(item => this.compareWith(value, item.nzValue)) || null;
-  }
-
-  updatePosition(position: NzDropDownPosition): void {
-    this.dropDownPosition = position;
-    this.changeDetectorRef.markForCheck();
   }
 
   private optionsInit(): void {

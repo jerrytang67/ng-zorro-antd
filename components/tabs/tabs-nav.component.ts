@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -36,8 +33,8 @@ import { merge, of as observableOf, Subject, Subscription } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
 
 import { NzTabLabelDirective } from './tab-label.directive';
-import { NzTabPosition, NzTabPositionMode } from './table.types';
 import { NzTabsInkBarDirective } from './tabs-ink-bar.directive';
+import { NzTabPosition, NzTabPositionMode } from './tabs.types';
 
 const EXAGGERATED_OVERSCROLL = 64;
 export type ScrollDirection = 'after' | 'before';

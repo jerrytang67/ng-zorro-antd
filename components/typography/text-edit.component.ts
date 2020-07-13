@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -19,9 +16,8 @@ import {
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
-import { NzI18nService } from 'ng-zorro-antd/i18n';
+import { NzI18nService, NzTextI18nInterface } from 'ng-zorro-antd/i18n';
 import { NzAutosizeDirective } from 'ng-zorro-antd/input';
 
 import { Subject } from 'rxjs';
@@ -56,7 +52,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class NzTextEditComponent implements OnInit, OnDestroy {
   editing = false;
-  locale: NzSafeAny = {};
+  locale!: NzTextI18nInterface;
   private destroy$ = new Subject();
 
   @Input() text?: string;

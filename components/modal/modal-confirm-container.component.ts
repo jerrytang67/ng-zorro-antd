@@ -1,12 +1,9 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-import { FocusTrapFactory } from '@angular/cdk/a11y';
+import { ConfigurableFocusTrapFactory } from '@angular/cdk/a11y';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { CdkPortalOutlet } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
@@ -17,7 +14,6 @@ import {
   ElementRef,
   EventEmitter,
   Inject,
-  NgZone,
   Optional,
   Output,
   Renderer2,
@@ -27,7 +23,7 @@ import { ANIMATION_MODULE_TYPE } from '@angular/platform-browser/animations';
 import { NzConfigService } from 'ng-zorro-antd/core/config';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 
-import { NzI18nService } from 'ng-zorro-antd/i18n';
+import { NzI18nService, NzModalI18nInterface } from 'ng-zorro-antd/i18n';
 
 import { takeUntil } from 'rxjs/operators';
 
@@ -43,6 +39,7 @@ import { ModalOptions } from './modal-types';
       #modalElement
       role="document"
       class="ant-modal"
+      (mousedown)="onMousedown()"
       [ngClass]="config.nzClassName!"
       [ngStyle]="config.nzStyle!"
       [style.width]="config?.nzWidth! | nzToCssUnit"
@@ -66,7 +63,7 @@ import { ModalOptions } from './modal-types';
             <div class="ant-modal-confirm-btns">
               <button
                 *ngIf="config.nzCancelText !== null"
-                [attr.cdkFocusInitial]="config.nzAutofocus === 'cancel'"
+                [attr.cdkFocusInitial]="config.nzAutofocus === 'cancel' || null"
                 nz-button
                 (click)="onCancel()"
                 [nzLoading]="!!config.nzCancelLoading"
@@ -76,7 +73,7 @@ import { ModalOptions } from './modal-types';
               </button>
               <button
                 *ngIf="config.nzOkText !== null"
-                [attr.cdkFocusInitial]="config.nzAutofocus === 'ok'"
+                [attr.cdkFocusInitial]="config.nzAutofocus === 'ok' || null"
                 nz-button
                 [nzType]="config.nzOkType!"
                 (click)="onOk()"
@@ -103,8 +100,8 @@ import { ModalOptions } from './modal-types';
     '[@modalContainer]': 'state',
     '(@modalContainer.start)': 'onAnimationStart($event)',
     '(@modalContainer.done)': 'onAnimationDone($event)',
-    '(mousedown)': 'onMousedown($event)',
-    '(mouseup)': 'onMouseup($event)'
+    '(click)': 'onContainerClick($event)',
+    '(mouseup)': 'onMouseup()'
   }
 })
 export class NzModalConfirmContainerComponent extends BaseModalContainer {
@@ -112,22 +109,21 @@ export class NzModalConfirmContainerComponent extends BaseModalContainer {
   @ViewChild('modalElement', { static: true }) modalElementRef!: ElementRef<HTMLDivElement>;
   @Output() readonly cancelTriggered = new EventEmitter<void>();
   @Output() readonly okTriggered = new EventEmitter<void>();
-  locale: { okText?: string; cancelText?: string } = {};
+  locale!: NzModalI18nInterface;
 
   constructor(
     private i18n: NzI18nService,
     elementRef: ElementRef,
-    focusTrapFactory: FocusTrapFactory,
+    focusTrapFactory: ConfigurableFocusTrapFactory,
     cdr: ChangeDetectorRef,
     render: Renderer2,
-    zone: NgZone,
     overlayRef: OverlayRef,
     nzConfigService: NzConfigService,
     public config: ModalOptions,
     @Optional() @Inject(DOCUMENT) document: NzSafeAny,
     @Optional() @Inject(ANIMATION_MODULE_TYPE) animationType: string
   ) {
-    super(elementRef, focusTrapFactory, cdr, render, zone, overlayRef, nzConfigService, config, document, animationType);
+    super(elementRef, focusTrapFactory, cdr, render, overlayRef, nzConfigService, config, document, animationType);
     this.i18n.localeChange.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.locale = this.i18n.getLocaleData('Modal');
     });

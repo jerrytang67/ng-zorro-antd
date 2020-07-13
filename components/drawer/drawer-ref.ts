@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -11,11 +8,12 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { Observable } from 'rxjs';
 import { NzDrawerPlacement } from './drawer-options';
 
-export abstract class NzDrawerRef<R = NzSafeAny> {
+export abstract class NzDrawerRef<T = NzSafeAny, R = NzSafeAny> {
   abstract afterClose: Observable<R>;
   abstract afterOpen: Observable<void>;
   abstract close(result?: R): void;
   abstract open(): void;
+  abstract getContentComponent(): T | null;
 
   abstract nzClosable?: boolean;
   abstract nzNoAnimation?: boolean;

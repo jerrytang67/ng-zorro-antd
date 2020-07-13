@@ -1,13 +1,10 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { DOWN_ARROW, ENTER, SPACE, TAB, UP_ARROW } from '@angular/cdk/keycodes';
+import { DOWN_ARROW, ENTER, ESCAPE, SPACE, TAB, UP_ARROW } from '@angular/cdk/keycodes';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedOverlayPositionChange } from '@angular/cdk/overlay';
 import { Platform } from '@angular/cdk/platform';
 import {
@@ -115,6 +112,7 @@ export type NzSelectSizeType = 'large' | 'default' | 'small';
       [cdkConnectedOverlayMinWidth]="$any(nzDropdownMatchSelectWidth ? null : triggerWidth)"
       [cdkConnectedOverlayWidth]="$any(nzDropdownMatchSelectWidth ? triggerWidth : null)"
       [cdkConnectedOverlayOrigin]="origin"
+      [cdkConnectedOverlayTransformOriginOn]="'.ant-select-dropdown'"
       [cdkConnectedOverlayPanelClass]="nzDropdownClassName!"
       (backdropClick)="setOpenState(false)"
       (detach)="setOpenState(false)"
@@ -128,7 +126,7 @@ export type NzSelectSizeType = 'large' | 'default' | 'small';
         [matchWidth]="nzDropdownMatchSelectWidth"
         [class.ant-select-dropdown-placement-bottomLeft]="dropDownPosition === 'bottom'"
         [class.ant-select-dropdown-placement-topLeft]="dropDownPosition === 'top'"
-        [@slideMotion]="dropDownPosition"
+        [@slideMotion]="'enter'"
         [@.disabled]="noAnimation?.nzNoAnimation"
         [nzNoAnimation]="noAnimation?.nzNoAnimation"
         [listOfContainerItem]="listOfContainerItem"
@@ -155,7 +153,7 @@ export type NzSelectSizeType = 'large' | 'default' | 'small';
     '[class.ant-select-allow-clear]': 'nzAllowClear',
     '[class.ant-select-borderless]': 'nzBorderless',
     '[class.ant-select-open]': 'nzOpen',
-    '[class.ant-select-focused]': 'nzOpen',
+    '[class.ant-select-focused]': 'nzOpen || focused',
     '[class.ant-select-single]': `nzMode === 'default'`,
     '[class.ant-select-multiple]': `nzMode !== 'default'`
   }
@@ -196,7 +194,7 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
   @Input() nzFilterOption: NzFilterOptionType = defaultFilterOption;
   @Input() compareWith: (o1: NzSafeAny, o2: NzSafeAny) => boolean = (o1: NzSafeAny, o2: NzSafeAny) => o1 === o2;
   @Input() @InputBoolean() nzAllowClear = false;
-  @Input() @InputBoolean() nzBorderless = false;
+  @Input() @WithConfig<boolean>(NZ_CONFIG_COMPONENT_NAME) @InputBoolean() nzBorderless = false;
   @Input() @InputBoolean() nzShowSearch = false;
   @Input() @InputBoolean() nzLoading = false;
   @Input() @InputBoolean() nzAutoFocus = false;
@@ -232,6 +230,7 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
   listOfTopItem: NzSelectItemInterface[] = [];
   activatedValue: NzSafeAny | null = null;
   listOfValue: NzSafeAny[] = [];
+  focused = false;
 
   generateTagItem(value: string): NzSelectItemInterface {
     return {
@@ -280,14 +279,15 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
           return true;
         }
       });
-    if (
-      this.nzMode === 'tags' &&
-      this.searchValue &&
-      this.listOfTagAndTemplateItem.findIndex(item => item.nzLabel === this.searchValue) === -1
-    ) {
-      const tagItem = this.generateTagItem(this.searchValue);
-      listOfContainerItem = [tagItem, ...listOfContainerItem];
-      this.activatedValue = tagItem.nzValue;
+    if (this.nzMode === 'tags' && this.searchValue) {
+      const matchedItem = this.listOfTagAndTemplateItem.find(item => item.nzLabel === this.searchValue);
+      if (!matchedItem) {
+        const tagItem = this.generateTagItem(this.searchValue);
+        listOfContainerItem = [tagItem, ...listOfContainerItem];
+        this.activatedValue = tagItem.nzValue;
+      } else {
+        this.activatedValue = matchedItem.nzValue;
+      }
     }
     if (
       this.listOfValue.length !== 0 &&
@@ -307,8 +307,10 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
     /** insert group item **/
     listOfGroupLabel.forEach(label => {
       const index = listOfContainerItem.findIndex(item => label === item.groupLabel);
-      const groupItem = { groupLabel: label, type: 'group', key: label } as NzSelectItemInterface;
-      listOfContainerItem.splice(index, 0, groupItem);
+      if (index > -1) {
+        const groupItem = { groupLabel: label, type: 'group', key: label } as NzSelectItemInterface;
+        listOfContainerItem.splice(index, 0, groupItem);
+      }
     });
     this.listOfContainerItem = [...listOfContainerItem];
     this.updateCdkConnectedOverlayPositions();
@@ -397,6 +399,13 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
       case TAB:
         this.setOpenState(false);
         break;
+      case ESCAPE:
+        this.setOpenState(false);
+        break;
+      default:
+        if (!this.nzOpen) {
+          this.setOpenState(true);
+        }
     }
   }
 
@@ -528,11 +537,15 @@ export class NzSelectComponent implements ControlValueAccessor, OnInit, AfterVie
       .pipe(takeUntil(this.destroy$))
       .subscribe(focusOrigin => {
         if (!focusOrigin) {
+          this.focused = false;
+          this.cdr.markForCheck();
           this.nzBlur.emit();
           Promise.resolve().then(() => {
             this.onTouched();
           });
         } else {
+          this.focused = true;
+          this.cdr.markForCheck();
           this.nzFocus.emit();
         }
       });

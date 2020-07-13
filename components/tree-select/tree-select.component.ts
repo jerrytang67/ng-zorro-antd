@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -70,6 +67,7 @@ const TREE_SELECT_DEFAULT_CLASS = 'ant-select-dropdown ant-select-tree-dropdown'
       [cdkConnectedOverlayOrigin]="cdkOverlayOrigin"
       [cdkConnectedOverlayOpen]="nzOpen"
       [cdkConnectedOverlayHasBackdrop]="true"
+      [cdkConnectedOverlayTransformOriginOn]="'.ant-select-tree-dropdown'"
       [cdkConnectedOverlayMinWidth]="$any(nzDropdownMatchSelectWidth ? null : triggerWidth)"
       [cdkConnectedOverlayWidth]="$any(nzDropdownMatchSelectWidth ? triggerWidth : null)"
       (backdropClick)="closeDropDown()"
@@ -77,8 +75,8 @@ const TREE_SELECT_DEFAULT_CLASS = 'ant-select-dropdown ant-select-tree-dropdown'
       (positionChange)="onPositionChange($event)"
     >
       <div
+        [@slideMotion]="'enter'"
         [ngClass]="dropdownClassName"
-        [@slideMotion]="nzOpen ? dropDownPosition : 'void'"
         [@.disabled]="noAnimation?.nzNoAnimation"
         [nzNoAnimation]="noAnimation?.nzNoAnimation"
         [class.ant-select-dropdown-placement-bottomLeft]="dropDownPosition === 'bottom'"
@@ -376,7 +374,6 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
       this.nzOpen = true;
       this.nzOpenChange.emit(this.nzOpen);
       this.updateCdkConnectedOverlayStatus();
-      this.updatePosition();
     }
   }
 
@@ -414,7 +411,7 @@ export class NzTreeSelectComponent extends NzTreeBase implements ControlValueAcc
     node.isSelected = false;
     node.isChecked = false;
     if (this.nzCheckable) {
-      this.nzTreeService.conduct(node);
+      this.nzTreeService.conduct(node, this.nzCheckStrictly);
     } else {
       this.nzTreeService.setSelectedNodeList(node, this.nzMultiple);
     }

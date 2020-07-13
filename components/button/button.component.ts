@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -110,7 +107,7 @@ export class NzButtonComponent implements OnDestroy, OnChanges, AfterViewInit, A
     const iconCount = listOfNode.filter(node => node.nodeName === 'I').length;
     const noText = listOfNode.every(node => node.nodeName !== '#text');
     const noSpan = listOfNode.every(node => node.nodeName !== 'SPAN');
-    const isIconOnly = noSpan && noText && iconCount === 1;
+    const isIconOnly = noSpan && noText && iconCount >= 1;
     if (isIconOnly) {
       renderer.addClass(element, 'ant-btn-icon-only');
     }

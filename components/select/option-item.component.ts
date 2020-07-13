@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -23,7 +20,10 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
   selector: 'nz-option-item',
   template: `
     <div class="ant-select-item-option-content">
-      <ng-container *ngIf="!customContent; else template">{{ label }}</ng-container>
+      <ng-container *ngIf="!customContent">{{ label }}</ng-container>
+      <ng-container *ngIf="customContent">
+        <ng-template [ngTemplateOutlet]="template"></ng-template>
+      </ng-container>
     </div>
     <div *ngIf="showState && selected" class="ant-select-item-option-state" style="user-select: none" unselectable="on">
       <i nz-icon nzType="check" class="ant-select-selected-icon" *ngIf="!icon; else icon"></i>

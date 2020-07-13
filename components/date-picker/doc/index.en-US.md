@@ -25,12 +25,13 @@ import en from '@angular/common/locales/en';
 registerLocaleData(en);
 ```
 
-There are four kinds of picker:
+There are five kinds of picker:
 
 - nz-date-picker
 - nz-month-picker
 - nz-range-picker
 - nz-week-picker
+- nz-year-picker
 
 **Note:** All input and output date objects are [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), you can manpulate it with [date-fns](https://date-fns.org/).
 
@@ -44,6 +45,7 @@ The following APIs are shared by nz-date-picker, nz-month-picker, nz-range-picke
 | `[nzAutoFocus]` | get focus when component mounted | `boolean` | `false` | - |
 | `[nzDateRender]` | custom rendering function for date cells (Not support by month-picker/year-picker) | - |`TemplateRef<Date> \| string \| ((d: Date) => TemplateRef<Date> \| string)` | - | - |
 | `[nzDisabled]` | determine whether the nz-date-picker is disabled | `boolean` | `false` | - |
+| `[nzInputReadOnly]` | set the readonly attribute of the input tag (avoids virtual keyboard on touch devices) | `boolean` | `false` | - |
 | `[nzDisabledDate]` | specify the date that cannot be selected | `(current: Date) => boolean` | - | - |
 | `[nzLocale]` | localization configuration | `object` | [default](https://github.com/ant-design/ant-design/blob/master/components/date-picker/locale/example.json) | - |
 | `[nzOpen]` | open state of picker | `boolean` | - | - |

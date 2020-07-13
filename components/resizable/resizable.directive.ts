@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -32,6 +29,7 @@ export interface NzResizeEvent {
   host: {
     '[class.nz-resizable]': 'true',
     '[class.nz-resizable-resizing]': 'resizing',
+    '[class.nz-resizable-disabled]': 'nzDisabled',
     '(mouseenter)': 'onMouseenter()',
     '(mouseleave)': 'onMouseleave()'
   }
@@ -39,6 +37,7 @@ export interface NzResizeEvent {
 export class NzResizableDirective implements AfterViewInit, OnDestroy {
   static ngAcceptInputType_nzLockAspectRatio: BooleanInput;
   static ngAcceptInputType_nzPreview: BooleanInput;
+  static ngAcceptInputType_nzDisabled: BooleanInput;
 
   @Input() nzBounds: 'window' | 'parent' | ElementRef<HTMLElement> = 'parent';
   @Input() nzMaxHeight?: number;
@@ -50,6 +49,7 @@ export class NzResizableDirective implements AfterViewInit, OnDestroy {
   @Input() nzMinColumn: number = -1;
   @Input() @InputBoolean() nzLockAspectRatio: boolean = false;
   @Input() @InputBoolean() nzPreview: boolean = false;
+  @Input() @InputBoolean() nzDisabled: boolean = false;
   @Output() readonly nzResize = new EventEmitter<NzResizeEvent>();
   @Output() readonly nzResizeEnd = new EventEmitter<NzResizeEvent>();
   @Output() readonly nzResizeStart = new EventEmitter<NzResizeEvent>();
@@ -70,6 +70,9 @@ export class NzResizableDirective implements AfterViewInit, OnDestroy {
     private ngZone: NgZone
   ) {
     this.nzResizableService.handleMouseDown$.pipe(takeUntil(this.destroy$)).subscribe(event => {
+      if (this.nzDisabled) {
+        return;
+      }
       this.resizing = true;
       this.nzResizableService.startResizing(event.mouseEvent);
       this.currentHandleEvent = event;

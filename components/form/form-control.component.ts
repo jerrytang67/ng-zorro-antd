@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -202,7 +199,7 @@ export class NzFormControlComponent implements OnChanges, OnDestroy, OnInit, Aft
       for (const key in errors) {
         if (errors.hasOwnProperty(key)) {
           autoErrorTip =
-            errors[key][this.localeId] ??
+            errors[key]?.[this.localeId] ??
             this.nzAutoTips?.[this.localeId]?.[key] ??
             this.nzFormDirective?.nzAutoTips?.[this.localeId]?.[key];
         }

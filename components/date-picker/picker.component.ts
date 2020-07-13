@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -59,6 +56,7 @@ import { PREFIX_CLASS } from './util';
         #pickerInput
         [class.ant-input-disabled]="disabled"
         [disabled]="disabled"
+        [readOnly]="inputReadOnly"
         [(ngModel)]="inputValue"
         placeholder="{{ getPlaceholder() }}"
         [size]="inputSize"
@@ -93,10 +91,11 @@ import { PREFIX_CLASS } from './util';
       <input
         #rangePickerInput
         [disabled]="disabled"
+        [readOnly]="inputReadOnly"
         [size]="inputSize"
         (click)="onClickInputBox($event, partType)"
         (blur)="onBlur()"
-        (input)="onInputKeyup($event, false)"
+        (input)="onInputKeyup($event)"
         (focus)="onFocus(partType)"
         (keyup.enter)="onInputKeyup($event, true)"
         [(ngModel)]="inputValue[datePickerService.getActiveIndex(partType)]"
@@ -125,18 +124,18 @@ import { PREFIX_CLASS } from './util';
       [cdkConnectedOverlayOpen]="realOpenState"
       [cdkConnectedOverlayHasBackdrop]="!isOpenHandledByUser()"
       [cdkConnectedOverlayPositions]="overlayPositions"
+      [cdkConnectedOverlayTransformOriginOn]="'.ant-picker-wrapper'"
       (positionChange)="onPositionChange($event)"
       (backdropClick)="onClickBackdrop()"
       (detach)="onOverlayDetach()"
       (overlayKeydown)="onOverlayKeydown($event)"
     >
       <div
+        class="ant-picker-wrapper"
         [nzNoAnimation]="noAnimation"
-        [@slideMotion]="currentPositionY"
+        [@slideMotion]="'enter'"
         (@slideMotion.done)="animationDone()"
         style="position: relative;"
-        [style.left]="currentPositionX === 'start' ? '-12px' : '12px'"
-        [style.top]="currentPositionY === 'top' ? '-8px' : '8px'"
       >
         <div
           class="{{ prefixCls }}-dropdown {{ dropdownClassName }}"
@@ -161,6 +160,7 @@ export class NzPickerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
   @Input() isRange: boolean = false;
   @Input() open: boolean | undefined = undefined;
   @Input() disabled: boolean = false;
+  @Input() inputReadOnly: boolean = false;
   @Input() placeholder!: string | string[];
   @Input() allowClear?: boolean;
   @Input() autoFocus?: boolean;
@@ -194,26 +194,32 @@ export class NzPickerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
   overlayOpen: boolean = false; // Available when "open"=undefined
   overlayPositions: ConnectionPositionPair[] = [
     {
-      // offsetX: -10, // TODO: What a pity, cdk/overlay current not support offset configs even though it already provide these properties
-      // offsetY: -10,
+      offsetX: -12,
+      offsetY: 8,
       originX: 'start',
       originY: 'bottom',
       overlayX: 'start',
       overlayY: 'top'
     },
     {
+      offsetX: -12,
+      offsetY: -8,
       originX: 'start',
       originY: 'top',
       overlayX: 'start',
       overlayY: 'bottom'
     },
     {
+      offsetX: 12,
+      offsetY: 8,
       originX: 'end',
       originY: 'bottom',
       overlayX: 'end',
       overlayY: 'top'
     },
     {
+      offsetX: 12,
+      offsetY: -8,
       originX: 'end',
       originY: 'top',
       overlayX: 'end',
@@ -255,7 +261,6 @@ export class NzPickerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     }
 
     if (this.isRange) {
-      this.resetInputWidthAndArrowLeft();
       fromEvent(window, 'resize')
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => {
@@ -294,7 +299,7 @@ export class NzPickerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
   }
 
   resetInputWidthAndArrowLeft(): void {
-    this.inputWidth = this.rangePickerInputs?.first.nativeElement.offsetWidth || 0;
+    this.inputWidth = this.rangePickerInputs?.first?.nativeElement.offsetWidth || 0;
     this.arrowLeft = this.inputWidth + this.separatorElement?.nativeElement.offsetWidth || 0;
   }
 
@@ -324,15 +329,11 @@ export class NzPickerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
   // Show overlay content
   showOverlay(): void {
     if (!this.realOpenState) {
+      this.resetInputWidthAndArrowLeft();
       this.overlayOpen = true;
       this.animationStart();
       this.focus();
       this.openChange.emit(true);
-      setTimeout(() => {
-        if (this.cdkConnectedOverlay && this.cdkConnectedOverlay.overlayRef) {
-          this.cdkConnectedOverlay.overlayRef.updatePosition();
-        }
-      });
     }
   }
 
@@ -408,14 +409,14 @@ export class NzPickerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     return this.dateHelper.format(value && (value as CandyDate).nativeDate, this.format);
   }
 
-  onInputKeyup(event: Event, isEnter: boolean = false): void {
-    if (isEnter && !this.realOpenState) {
+  onInputKeyup(event: Event, emitValue: boolean = false): void {
+    if (!this.realOpenState) {
       this.showOverlay();
       return;
     }
     const date = this.checkValidInputDate((event as KeyboardEvent).target!);
     if (this.panel && date) {
-      this.panel.changeValueFromSelect(date, isEnter);
+      this.panel.changeValueFromSelect(date, emitValue);
     }
   }
 

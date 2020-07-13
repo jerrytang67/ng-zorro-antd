@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -10,7 +7,7 @@ import { OverlayRef } from '@angular/cdk/overlay';
 import { EventEmitter } from '@angular/core';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { isPromise } from 'ng-zorro-antd/core/util';
-import { merge, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
 import { BaseModalContainer } from './modal-container';
@@ -51,17 +48,14 @@ export class NzModalRef<T = NzSafeAny, R = NzSafeAny> implements NzModalLegacyAP
         }
       });
 
-    merge(
-      containerInstance.onDestroy,
-      containerInstance.animationStateChanged.pipe(
+    containerInstance.animationStateChanged
+      .pipe(
         filter(event => event.phaseName === 'done' && event.toState === 'exit'),
         take(1)
       )
-    )
-      .pipe(take(1))
       .subscribe(() => {
         clearTimeout(this.closeTimeout);
-        this.finishDialogClose();
+        this._finishDialogClose();
       });
 
     containerInstance.containerClick.pipe(take(1)).subscribe(() => {
@@ -143,7 +137,7 @@ export class NzModalRef<T = NzSafeAny, R = NzSafeAny> implements NzModalLegacyAP
       .subscribe(event => {
         this.overlayRef.detachBackdrop();
         this.closeTimeout = setTimeout(() => {
-          this.finishDialogClose();
+          this._finishDialogClose();
         }, event.totalTime + 100);
       });
 
@@ -153,6 +147,7 @@ export class NzModalRef<T = NzSafeAny, R = NzSafeAny> implements NzModalLegacyAP
 
   updateConfig(config: ModalOptions): void {
     Object.assign(this.config, config);
+    this.containerInstance.bindBackdropStyle();
     this.containerInstance.cdr.markForCheck();
   }
 
@@ -199,7 +194,7 @@ export class NzModalRef<T = NzSafeAny, R = NzSafeAny> implements NzModalLegacyAP
     }
   }
 
-  private finishDialogClose(): void {
+  _finishDialogClose(): void {
     this.state = NzModalState.CLOSED;
     this.overlayRef.dispose();
   }

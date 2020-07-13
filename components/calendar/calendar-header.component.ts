@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -78,11 +75,11 @@ export class NzCalendarHeaderComponent implements OnInit {
   }
 
   get yearTypeText(): string {
-    return this.i18n.getLocale().Calendar.year;
+    return this.i18n.getLocale().Calendar.lang.year;
   }
 
   get monthTypeText(): string {
-    return this.i18n.getLocale().Calendar.month;
+    return this.i18n.getLocale().Calendar.lang.month;
   }
 
   constructor(private i18n: I18n, private dateHelper: DateHelperService) {}

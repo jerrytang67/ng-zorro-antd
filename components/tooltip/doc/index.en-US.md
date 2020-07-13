@@ -25,20 +25,15 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 | `[nzTooltipTrigger]` | Tooltip trigger mode. If set to `null` it would not be triggered | `'click' \| 'focus' \| 'hover' \| null` | `'hover'` |
 | `[nzTooltipPlacement]` | The position of the tooltip relative to the target | `'top' \| 'left' \| 'right' \| 'bottom' \| 'topLeft' \| 'topRight' \| 'bottomLeft' \| 'bottomRight' \| 'leftTop' \| 'leftBottom' \| 'rightTop' \| 'rightBottom'` | `'top'` |
 | `[nzTooltipOrigin]` | Origin of the tooltip | `ElementRef` | - |
-
-
+| `[nzTooltipVisible]` | Show or hide tooltip | `boolean` | `false` |
+| `(nzTooltipVisibleChange)` | Callback of hide or show | `EventEmitter<boolean>` | - |
+| `[nzTooltipMouseEnterDelay]` | Delay in seconds, before tooltip is shown on mouse enter | `number` | `0.15` |
+| `[nzTooltipMouseLeaveDelay]` | Delay in seconds, before tooltip is hidden on mouse leave | `number` | `0.1` |
+| `[nzTooltipOverlayClassName]` | Class name of the tooltip card | `string` | - |
+| `[nzTooltipOverlayStyle]` | Style of the tooltip card | `object` | - |
 ### Common API
 
 The following APIs are shared by `nz-tooltip`, `nz-popconfirm`, `nz-popover`.
-
-| Property | Description | Type | Default |
-| -------- | ----------- | ---- | ------- |
-| `[nzMouseEnterDelay]` | Delay in seconds, before tooltip is shown on mouse enter | `number` | `0.15` |
-| `[nzMouseLeaveDelay]` | Delay in seconds, before tooltip is hidden on mouse leave | `number` | `0.1` |
-| `[nzOverlayClassName]` | Class name of the tooltip card | `string` | - |
-| `[nzOverlayStyle]` | Style of the tooltip card | `object` | - |
-| `[nzVisible]` | Whether the floating tooltip card is visible or not | `boolean` | `false` |
-| `(nzVisibleChange)` | Callback executed when visibility of the tooltip card is changed | `EventEmitter<boolean>` | - |
 
 | Method | Description |
 | --- | --- |

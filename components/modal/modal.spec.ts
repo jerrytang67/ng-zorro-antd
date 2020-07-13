@@ -1,5 +1,6 @@
 import { ESCAPE } from '@angular/cdk/keycodes';
 import { OverlayContainer } from '@angular/cdk/overlay';
+import { ComponentPortal, TemplatePortal } from '@angular/cdk/portal';
 import { Location } from '@angular/common';
 import { SpyLocation } from '@angular/common/testing';
 import {
@@ -143,6 +144,27 @@ describe('NzModal', () => {
     expect(modalContentElement!.textContent).toBe('Hello Modal');
     expect(fixture.componentInstance.modalRef).toBe(modalRef);
     modalRef.close();
+  });
+
+  it('should be thrown when attaching repeatedly', () => {
+    const modalRefComponent = modalService.create({
+      nzContent: TestWithModalContentComponent,
+      nzComponentParams: {
+        value: 'Modal'
+      }
+    });
+
+    expect(() => {
+      modalRefComponent.containerInstance.attachComponentPortal(new ComponentPortal(TestWithModalContentComponent));
+    }).toThrowError('Attempting to attach modal content after content is already attached');
+
+    const modalRefTemplate = modalService.create({
+      nzContent: fixture.componentInstance.templateRef
+    });
+
+    expect(() => {
+      modalRefTemplate.containerInstance.attachTemplatePortal(new TemplatePortal(fixture.componentInstance.templateRef, null!));
+    }).toThrowError('Attempting to attach modal content after content is already attached');
   });
 
   it('should open modal with HTML string', () => {
@@ -346,10 +368,14 @@ describe('NzModal', () => {
 
     fixture.detectChanges();
 
-    const modalWrap = overlayContainerElement.querySelector('nz-modal-container') as HTMLElement;
-    dispatchMouseEvent(modalWrap, 'mousedown');
+    const modalWrapElement = overlayContainerElement.querySelector('nz-modal-container') as HTMLElement;
+    const modalElement = overlayContainerElement.querySelector('nz-modal-container .ant-modal') as HTMLElement;
+    dispatchMouseEvent(modalElement, 'mousedown');
     fixture.detectChanges();
-    dispatchMouseEvent(modalWrap, 'mouseup');
+    dispatchMouseEvent(modalWrapElement, 'mouseup');
+    flush();
+    modalWrapElement.click();
+    fixture.detectChanges();
     flush();
     expect(overlayContainerElement.querySelector('nz-modal-container')).toBeFalsy();
   }));
@@ -401,9 +427,18 @@ describe('NzModal', () => {
 
     fixture.detectChanges();
 
-    expect(modalRef.getBackdropElement()?.classList).not.toContain('ant-modal-mask');
+    expect(modalRef.getBackdropElement()?.classList).not.toContain('ant-modal-mask', 'should use global config');
 
     configService.set('modal', { nzMask: true });
+    fixture.detectChanges();
+
+    expect(modalRef.getBackdropElement()?.classList).toContain('ant-modal-mask', 'should add class when global config changed');
+
+    configService.set('modal', { nzMask: false });
+    fixture.detectChanges();
+    expect(modalRef.getBackdropElement()?.classList).not.toContain('ant-modal-mask', 'should remove class when global config changed');
+
+    configService.set('modal', { nzMask: true }); // reset
     modalRef.close();
     fixture.detectChanges();
     flush();
@@ -629,6 +664,16 @@ describe('NzModal', () => {
 
     expect(modalRef.getBackdropElement()!.style.color).toBe('rgb(0, 0, 0)');
 
+    modalRef.updateConfig({
+      nzMaskStyle: {
+        color: 'rgb(255, 0, 0)'
+      }
+    });
+
+    fixture.detectChanges();
+    flushMicrotasks();
+
+    expect(modalRef.getBackdropElement()!.style.color).toBe('rgb(255, 0, 0)');
     modalRef.close();
     fixture.detectChanges();
     flush();
@@ -945,6 +990,17 @@ describe('NzModal', () => {
       flushMicrotasks();
 
       expect(document.activeElement!.tagName).toBe('INPUT', 'Expected first tabbable element (input) in the modal to be focused.');
+    }));
+
+    it('should focus the first tabbable element when content is string type', fakeAsync(() => {
+      const modalRef = modalService.confirm({
+        nzContent: 'confirm content'
+      });
+
+      fixture.detectChanges();
+      flushMicrotasks();
+
+      expect(modalRef.containerInstance.getNativeElement().contains(document.activeElement)).toBe(true);
     }));
 
     it('should allow disabling focus of the first tabbable element', fakeAsync(() => {
@@ -1367,11 +1423,17 @@ describe('NzModal', () => {
       componentFixture.detectChanges();
       flush();
 
-      let modalWrap = overlayContainerElement.querySelector('nz-modal-container') as HTMLElement;
-      dispatchMouseEvent(modalWrap, 'mousedown');
+      let modalWrapElement = overlayContainerElement.querySelector('nz-modal-container') as HTMLElement;
+      let modalElement = overlayContainerElement.querySelector('nz-modal-container .ant-modal') as HTMLElement;
+
+      dispatchMouseEvent(modalWrapElement, 'mousedown');
       fixture.detectChanges();
-      dispatchMouseEvent(modalWrap, 'mouseup');
+      dispatchMouseEvent(modalElement, 'mouseup');
       flush();
+      modalWrapElement.click();
+      fixture.detectChanges();
+      flush();
+
       expect(componentInstance.cancelSpy).not.toHaveBeenCalled();
 
       configService.set('modal', {
@@ -1380,10 +1442,15 @@ describe('NzModal', () => {
       componentFixture.detectChanges();
       flush();
 
-      modalWrap = overlayContainerElement.querySelector('nz-modal-container') as HTMLElement;
-      dispatchMouseEvent(modalWrap, 'mousedown');
+      modalWrapElement = overlayContainerElement.querySelector('nz-modal-container') as HTMLElement;
+      modalElement = overlayContainerElement.querySelector('nz-modal-container .ant-modal') as HTMLElement;
+
+      dispatchMouseEvent(modalWrapElement, 'mousedown');
       fixture.detectChanges();
-      dispatchMouseEvent(modalWrap, 'mouseup');
+      dispatchMouseEvent(modalElement, 'mouseup');
+      flush();
+      modalWrapElement.click();
+      fixture.detectChanges();
       flush();
       expect(componentInstance.cancelSpy).toHaveBeenCalled();
     }));

@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -277,8 +274,12 @@ export class NzTreeComponent extends NzTreeBase implements OnInit, OnDestroy, Co
       this.handleNzData(this.nzData);
     }
 
-    if (nzCheckedKeys || nzCheckStrictly) {
+    if (nzCheckedKeys) {
       this.handleCheckedKeys(this.nzCheckedKeys);
+    }
+
+    if (nzCheckStrictly) {
+      this.handleCheckedKeys(null);
     }
 
     if (nzExpandedKeys || nzExpandAll) {
@@ -323,7 +324,7 @@ export class NzTreeComponent extends NzTreeBase implements OnInit, OnDestroy, Co
     this.nzTreeService.flattenTreeData(data, expandKeys);
   }
 
-  handleCheckedKeys(keys: NzTreeNodeKey[]): void {
+  handleCheckedKeys(keys: NzTreeNodeKey[] | null): void {
     this.nzTreeService.conductCheck(keys, this.nzCheckStrictly);
   }
 

@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -134,18 +131,16 @@ export class NzColDirective implements OnInit, OnChanges, AfterViewInit, OnDestr
   ngAfterViewInit(): void {
     if (this.nzRowDirective) {
       this.nzRowDirective.actualGutter$.pipe(takeUntil(this.destroy$)).subscribe(([horizontalGutter, verticalGutter]) => {
-        const renderGutter = (name: string, gutter: number) => {
+        const renderGutter = (name: string, gutter: number | null) => {
           const nativeElement = this.elementRef.nativeElement;
-          this.renderer.setStyle(nativeElement, name, `${gutter / 2}px`);
+          if (gutter !== null) {
+            this.renderer.setStyle(nativeElement, name, `${gutter / 2}px`);
+          }
         };
-        if (horizontalGutter > 0) {
-          renderGutter('padding-left', horizontalGutter);
-          renderGutter('padding-right', horizontalGutter);
-        }
-        if (verticalGutter > 0) {
-          renderGutter('padding-top', verticalGutter);
-          renderGutter('padding-bottom', verticalGutter);
-        }
+        renderGutter('padding-left', horizontalGutter);
+        renderGutter('padding-right', horizontalGutter);
+        renderGutter('padding-top', verticalGutter);
+        renderGutter('padding-bottom', verticalGutter);
       });
     }
   }

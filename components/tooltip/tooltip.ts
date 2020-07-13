@@ -1,4 +1,9 @@
 /**
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
+ */
+
+/**
  * @license
  * Copyright Alibaba.com All Rights Reserved.
  *
@@ -14,16 +19,18 @@ import {
   ComponentFactoryResolver,
   Directive,
   ElementRef,
+  EventEmitter,
   Host,
   Input,
   Optional,
+  Output,
   Renderer2,
   ViewContainerRef,
   ViewEncapsulation
 } from '@angular/core';
 import { zoomBigMotion } from 'ng-zorro-antd/core/animation';
 import { NzNoAnimationDirective } from 'ng-zorro-antd/core/no-animation';
-import { NzTSType } from 'ng-zorro-antd/core/types';
+import { NgStyleInterface, NzTSType } from 'ng-zorro-antd/core/types';
 
 import { isTooltipEmpty, NzTooltipBaseComponent, NzTooltipBaseDirective, NzTooltipTrigger } from './base';
 
@@ -40,7 +47,14 @@ export class NzTooltipDirective extends NzTooltipBaseDirective {
   @Input('nzTooltipTrigger') specificTrigger?: NzTooltipTrigger;
   @Input('nzTooltipPlacement') specificPlacement?: string;
   @Input('nzTooltipOrigin') specificOrigin?: ElementRef<HTMLElement>;
+  @Input('nzTooltipVisible') specificVisible?: boolean;
+  @Input('nzTooltipMouseEnterDelay') specificMouseEnterDelay?: number;
+  @Input('nzTooltipMouseLeaveDelay') specificMouseLeaveDelay?: number;
+  @Input('nzTooltipOverlayClassName') specificOverlayClassName?: string;
+  @Input('nzTooltipOverlayStyle') specificOverlayStyle?: NgStyleInterface;
 
+  // tslint:disable-next-line:no-output-rename
+  @Output('nzTooltipVisibleChange') readonly specificVisibleChange = new EventEmitter<boolean>();
   componentFactory: ComponentFactory<NzToolTipComponent> = this.resolver.resolveComponentFactory(NzToolTipComponent);
 
   constructor(
@@ -69,6 +83,7 @@ export class NzTooltipDirective extends NzTooltipBaseDirective {
       [cdkConnectedOverlayOpen]="_visible"
       [cdkConnectedOverlayHasBackdrop]="_hasBackdrop"
       [cdkConnectedOverlayPositions]="_positions"
+      [cdkConnectedOverlayPush]="true"
       (backdropClick)="hide()"
       (detach)="hide()"
       (positionChange)="onPositionChange($event)"

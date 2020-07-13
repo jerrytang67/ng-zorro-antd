@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -57,7 +54,7 @@ export class NzTheadComponent implements AfterContentInit, OnDestroy, AfterViewI
   private destroy$ = new Subject<void>();
   isInsideTable = false;
   @ViewChild('contentTemplate', { static: true }) templateRef!: TemplateRef<NzSafeAny>;
-  @ContentChildren(NzTrDirective) listOfNzTrDirective!: QueryList<NzTrDirective>;
+  @ContentChildren(NzTrDirective, { descendants: true }) listOfNzTrDirective!: QueryList<NzTrDirective>;
   @ContentChildren(NzThAddOnComponent, { descendants: true }) listOfNzThAddOnComponent!: QueryList<NzThAddOnComponent>;
   /** @deprecated use nzSortFn and nzSortPriority instead **/
   @Input() @InputBoolean() nzSingleSort = false;
@@ -83,9 +80,7 @@ export class NzTheadComponent implements AfterContentInit, OnDestroy, AfterViewI
   ngOnChanges(changes: SimpleChanges): void {
     const { nzSingleSort } = changes;
     if (nzSingleSort) {
-      warnDeprecation(
-        `'nzSingleSort' is deprecated and will be removed in 10.0.0. Please use use 'nzSortFn' and 'nzSortPriority' instead instead.`
-      );
+      warnDeprecation(`'nzSingleSort' is deprecated and will be removed in 10.0.0. Please use 'nzSortFn' and 'nzSortPriority' instead.`);
     }
   }
 

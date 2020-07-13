@@ -6,7 +6,7 @@ import { HomeOutline } from '@ant-design/icons-angular/icons';
 
 import { NZ_CONFIG, NzConfigService } from 'ng-zorro-antd/core/config';
 import { dispatchMouseEvent } from 'ng-zorro-antd/core/testing';
-import { ComponentBed, createComponentBed } from 'ng-zorro-antd/core/testing/componet-bed';
+import { ComponentBed, createComponentBed } from 'ng-zorro-antd/core/testing/component-bed';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
 
 import { NzNotificationModule } from './notification.module';
@@ -193,6 +193,13 @@ describe('NzNotification', () => {
     notificationService.template(fixture.componentInstance.demoTemplateRef, { nzData: 'data' });
     fixture.detectChanges();
     expect(overlayContainerElement.textContent).toContain('test template contentdata');
+  });
+
+  it('should update an existing notification with use template ref when change nzData', () => {
+    notificationService.template(fixture.componentInstance.demoTemplateRef, { nzData: 'oldData', nzKey: 'exists' });
+    expect(overlayContainerElement.textContent).toContain('oldData');
+    notificationService.template(fixture.componentInstance.demoTemplateRef, { nzData: 'newData', nzKey: 'exists' });
+    expect(overlayContainerElement.textContent).toContain('newData');
   });
 
   it('should update an existing notification when keys are matched', () => {

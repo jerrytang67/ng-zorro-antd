@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -46,7 +43,7 @@ export type NzPlacementType = 'bottomLeft' | 'bottomCenter' | 'bottomRight' | 't
         class="ant-dropdown"
         [ngClass]="nzOverlayClassName"
         [ngStyle]="nzOverlayStyle"
-        [@slideMotion]="dropDownPosition"
+        [@slideMotion]="'enter'"
         [@.disabled]="noAnimation?.nzNoAnimation"
         [nzNoAnimation]="noAnimation?.nzNoAnimation"
         (mouseenter)="setMouseState(true)"
@@ -61,7 +58,6 @@ export type NzPlacementType = 'bottomLeft' | 'bottomCenter' | 'bottomRight' | 't
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NzDropdownMenuComponent implements AfterContentInit {
-  dropDownPosition: 'top' | 'center' | 'bottom' = 'bottom';
   mouseState$ = new BehaviorSubject<boolean>(false);
   isChildSubMenuOpen$ = this.nzMenuService.isChildSubMenuOpen$;
   descendantMenuItemClick$ = this.nzMenuService.descendantMenuItemClick$;

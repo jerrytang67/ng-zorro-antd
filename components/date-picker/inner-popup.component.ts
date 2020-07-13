@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -53,7 +50,6 @@ import { PREFIX_CLASS } from './util';
                 [value]="value"
                 (valueChange)="onChooseDecade($event)"
                 [disabledDate]="disabledDate"
-                [cellRender]="dateRender"
               ></decade-table>
             </div>
           </ng-container>
@@ -76,7 +72,6 @@ import { PREFIX_CLASS } from './util';
                 [value]="value"
                 (valueChange)="onChooseYear($event)"
                 [disabledDate]="disabledDate"
-                [cellRender]="dateRender"
               ></year-table>
             </div>
           </ng-container>
@@ -96,7 +91,6 @@ import { PREFIX_CLASS } from './util';
                 [value]="value"
                 [activeDate]="activeDate"
                 [disabledDate]="disabledDate"
-                [cellRender]="dateRender"
                 (valueChange)="onChooseMonth($event)"
               ></month-table>
             </div>

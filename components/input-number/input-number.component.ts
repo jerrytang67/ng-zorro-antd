@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -68,6 +65,7 @@ import { InputBoolean, isNotNil } from 'ng-zorro-antd/core/util';
         [attr.max]="nzMax"
         [placeholder]="nzPlaceHolder"
         [attr.step]="nzStep"
+        [attr.inputmode]="nzInputMode"
         (keydown)="onKeyDown($event)"
         (keyup)="stop()"
         [ngModel]="displayValue"
@@ -120,6 +118,7 @@ export class NzInputNumberComponent implements ControlValueAccessor, AfterViewIn
   @Input() nzPrecisionMode: 'cut' | 'toFixed' | ((value: number | string, precision?: number) => number) = 'toFixed';
   @Input() nzPlaceHolder = '';
   @Input() nzStep = 1;
+  @Input() nzInputMode: string = 'decimal';
   @Input() nzId: string | null = null;
   @Input() @InputBoolean() nzDisabled = false;
   @Input() @InputBoolean() nzAutoFocus = false;

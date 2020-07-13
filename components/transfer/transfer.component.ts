@@ -1,7 +1,4 @@
 /**
- * @license
- * Copyright Alibaba.com All Rights Reserved.
- *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
@@ -24,7 +21,7 @@ import {
 } from '@angular/core';
 import { BooleanInput, NgStyleInterface, NzSafeAny } from 'ng-zorro-antd/core/types';
 import { InputBoolean, toArray } from 'ng-zorro-antd/core/util';
-import { NzI18nService } from 'ng-zorro-antd/i18n';
+import { NzI18nService, NzTransferI18nInterface } from 'ng-zorro-antd/i18n';
 
 import { Observable, of, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -52,10 +49,10 @@ import { NzTransferListComponent } from './transfer-list.component';
       [render]="nzRender"
       [disabled]="nzDisabled"
       [showSearch]="nzShowSearch"
-      [searchPlaceholder]="nzSearchPlaceholder || locale.searchPlaceholder"
+      [searchPlaceholder]="nzSearchPlaceholder || locale?.searchPlaceholder"
       [notFoundContent]="nzNotFoundContent"
-      [itemUnit]="nzItemUnit || locale.itemUnit"
-      [itemsUnit]="nzItemsUnit || locale.itemsUnit"
+      [itemUnit]="nzItemUnit || locale?.itemUnit"
+      [itemsUnit]="nzItemsUnit || locale?.itemsUnit"
       [footer]="nzFooter"
       (handleSelect)="handleLeftSelect($event)"
       (handleSelectAll)="handleLeftSelectAll($event)"
@@ -84,10 +81,10 @@ import { NzTransferListComponent } from './transfer-list.component';
       [render]="nzRender"
       [disabled]="nzDisabled"
       [showSearch]="nzShowSearch"
-      [searchPlaceholder]="nzSearchPlaceholder || locale.searchPlaceholder"
+      [searchPlaceholder]="nzSearchPlaceholder || locale?.searchPlaceholder"
       [notFoundContent]="nzNotFoundContent"
-      [itemUnit]="nzItemUnit || locale.itemUnit"
-      [itemsUnit]="nzItemsUnit || locale.itemsUnit"
+      [itemUnit]="nzItemUnit || locale?.itemUnit"
+      [itemsUnit]="nzItemsUnit || locale?.itemsUnit"
       [footer]="nzFooter"
       (handleSelect)="handleRightSelect($event)"
       (handleSelectAll)="handleRightSelectAll($event)"
@@ -110,7 +107,7 @@ export class NzTransferComponent implements OnInit, OnChanges, OnDestroy {
   private unsubscribe$ = new Subject<void>();
   @ViewChildren(NzTransferListComponent)
   private lists!: QueryList<NzTransferListComponent>;
-  locale: NzSafeAny = {};
+  locale!: NzTransferI18nInterface;
 
   leftFilter = '';
   rightFilter = '';

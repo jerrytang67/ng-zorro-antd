@@ -147,9 +147,11 @@ describe('NzDrawerComponent', () => {
     component.open();
     fixture.detectChanges();
     expect(overlayContainerElement.querySelector('.ant-drawer')!.classList.contains('ant-drawer-open')).toBe(true);
+    expect(overlayContainerElement.querySelector('.ant-drawer')!.classList.contains('no-mask')).toBe(true);
     expect(overlayContainerElement.querySelector('.ant-drawer .ant-drawer-mask')).toBe(null);
     component.showMask = true;
     fixture.detectChanges();
+    expect(overlayContainerElement.querySelector('.ant-drawer')!.classList.contains('no-mask')).toBe(false);
   });
 
   it('should set nzMaskStyle & nzBodyStyle', () => {
@@ -417,6 +419,7 @@ describe('NzDrawerService', () => {
     component.openTemplate();
     fixture.detectChanges();
     tick(300);
+    expect(component.templateDrawerRef?.getContentComponent()).toBeNull();
     expect(component.templateOpenSpy).toHaveBeenCalled();
     fixture.detectChanges();
     (overlayContainerElement.querySelector('.ant-drawer .ant-drawer-mask') as HTMLElement).click();
@@ -437,6 +440,7 @@ describe('NzDrawerService', () => {
     drawerRef.afterClose.subscribe(closeSpy);
     fixture.detectChanges();
     expect(openSpy).not.toHaveBeenCalled();
+    expect(drawerRef.getContentComponent()).not.toBeNull();
     tick(300);
     expect(openSpy).toHaveBeenCalled();
     (overlayContainerElement.querySelector('.ant-drawer .close-btn') as HTMLElement).click();
@@ -444,6 +448,7 @@ describe('NzDrawerService', () => {
     tick(300);
     expect(closeSpy).toHaveBeenCalled();
     fixture.detectChanges();
+    expect(drawerRef.getContentComponent()).toBeNull();
   }));
 
   it('should `nzOnCancel` work', fakeAsync(() => {
